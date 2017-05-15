@@ -20,7 +20,7 @@ public class Game {
 	// Game Parameters
 	private static final int ROUNDS = 100;
 	private static final int GAMES = 1;
-	private static final int GRID_HEIGHT = 10 + players.length;
+	private static final int GRID_HEIGHT = 30 + players.length;
 	private static final int GRID_WIDTH = 30 + players.length;
 	
 	// Console
