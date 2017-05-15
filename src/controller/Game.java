@@ -9,12 +9,12 @@ import java.util.Map;
 import java.util.Random;
 
 import players.PassiveBot;
+import players.RandomBot;
 
 public class Game {
 	private static Player[] players = {
 		new PassiveBot(),
-		new PassiveBot(),
-		new PassiveBot()
+		new RandomBot()
 	};
 	
 	// Game Parameters
