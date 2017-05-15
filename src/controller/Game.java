@@ -14,14 +14,6 @@ public class Game {
 	private static Player[] players = {
 		new PassiveBot(),
 		new PassiveBot(),
-		new PassiveBot(),
-		new PassiveBot(),
-		new PassiveBot(),
-		new PassiveBot(),
-		new PassiveBot(),
-		new PassiveBot(),
-		new PassiveBot(),
-		new PassiveBot(),
 		new PassiveBot()
 	};
 	
@@ -1183,7 +1175,7 @@ public class Game {
 		}
 		String hull = String.join("", hulls);
 				
-		//X,Y,direction;action,moves,shots,mines,cooldown;hull;underwater,shield,scan
+		//X,Y,direction;moves,shots,mines,cooldown;hull;hits,sunken,damage;underwater,shield,scan
 		StringBuilder builder = new StringBuilder();
 		builder.append(ship.getPos().getX());
 		builder.append(",");
@@ -1193,8 +1185,6 @@ public class Game {
 		builder.append(";");
 		builder.append(hull);
 		builder.append(";");
-		builder.append(ship.getActionsLeft());
-		builder.append(",");
 		builder.append(ship.getMovesLeft());
 		builder.append(",");
 		builder.append(ship.getShotsLeft());
@@ -1202,6 +1192,12 @@ public class Game {
 		builder.append(ship.getMinesLeft());
 		builder.append(",");
 		builder.append(ship.getCooldownLeft());
+		builder.append(";");
+		builder.append(ship.getHits());
+		builder.append(",");
+		builder.append(ship.getSunken());
+		builder.append(",");
+		builder.append(ship.getDamage());
 		builder.append(";");
 		builder.append(ship.getUnderwater() ? "1" : "0");
 		builder.append(",");
@@ -1356,9 +1352,11 @@ public class Game {
 								}
 							}
 						}
+					} else if (CHARACTER_MINE.equals(map[y + j][x + k])) { 
+						builder.append(CHARACTER_MINE);
 					} else {
 						builder.append(CHARACTER_EMPTY);
-					}
+					} 
 				}
 			}
 		}
