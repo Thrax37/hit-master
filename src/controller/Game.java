@@ -18,14 +18,18 @@ public class Game {
 		new PassiveBot(),
 		new PassiveBot(),
 		new PassiveBot(),
+		new PassiveBot(),
+		new PassiveBot(),
+		new PassiveBot(),
+		new PassiveBot(),
 		new PassiveBot()
 	};
 	
 	// Game Parameters
 	private static final int ROUNDS = 100;
 	private static final int GAMES = 1;
-	private static final int GRID_HEIGHT = 10;
-	private static final int GRID_WIDTH = 30;
+	private static final int GRID_HEIGHT = 10 + players.length;
+	private static final int GRID_WIDTH = 30 + players.length;
 	
 	// Console
 	private static final boolean DEBUG = true;
@@ -767,7 +771,11 @@ public class Game {
 			builder.append(CHARACTER_GRID);
 			
 			for (int x = 0; x < GRID_WIDTH; x++) {
-				builder.append(map[y][x]);
+				if (MapUtils.isNumeric(map[y][x])) {
+					builder.append(Integer.parseInt(map[y][x]) % 10);
+				} else {
+					builder.append(map[y][x]);
+				}
 			}
 			
 			builder.append(CHARACTER_GRID + "\r\n");
