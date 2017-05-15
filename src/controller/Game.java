@@ -100,12 +100,20 @@ public class Game {
 		
 		List<Score> finalScores = new ArrayList<>();
 		for (Player player : playerScores.keySet()) {
-					
+			
+			int hits = 0;
+			int sunken = 0;
+			int damage = 0;
+			int death = 0;
+			
 			for (Score score : playerScores.get(player)) {
-				
+				hits += score.getHits();
+				sunken += score.getSunken();
+				damage += score.getDamage();
+				death += score.getDeath();
 			}
 						
-			finalScores.add(new Score(player));
+			finalScores.add(new Score(player, hits, sunken, damage, death));
 		}
 		
 		//sort descending
@@ -223,22 +231,22 @@ public class Game {
 			if (y - i < 0) return false;
 			if (!CHARACTER_EMPTY.equals(map[y - i][x]) && !CHARACTER_MINE.equals(map[y - i][x])) return false;
 			ship.getPos().setLocation(x, y - i);
-			if (CHARACTER_MINE.equals(map[y - i][x])) triggerExplosion(x, y - i);
+			if (CHARACTER_MINE.equals(map[y - i][x])) triggerExplosion(x, y - i, ship);
 		} else if (direction == 1) { // Right
 			if (x + i >= GRID_WIDTH) return false;
 			if (!CHARACTER_EMPTY.equals(map[y][x + i]) && !CHARACTER_MINE.equals(map[y][x + i])) return false;
 			ship.getPos().setLocation(x + i, y);
-			if (CHARACTER_MINE.equals(map[y][x + i])) triggerExplosion(x + i, y);
+			if (CHARACTER_MINE.equals(map[y][x + i])) triggerExplosion(x + i, y, ship);
 		} else if (direction == 2) { // Bottom
 			if (y + i >= GRID_HEIGHT) return false;
 			if (!CHARACTER_EMPTY.equals(map[y + i][x]) && !CHARACTER_MINE.equals(map[y + i][x])) return false;
 			ship.getPos().setLocation(x, y + i);
-			if (CHARACTER_MINE.equals(map[y + i][x])) triggerExplosion(x, y + i);
+			if (CHARACTER_MINE.equals(map[y + i][x])) triggerExplosion(x, y + i, ship);
 		} else if (direction == 3) { // Left
 			if (x - i < 0) return false;
 			if (!CHARACTER_EMPTY.equals(map[y][x - i]) && !CHARACTER_MINE.equals(map[y][x - i])) return false;
 			ship.getPos().setLocation(x - i, y);
-			if (CHARACTER_MINE.equals(map[y][x - i])) triggerExplosion(x - i, y);
+			if (CHARACTER_MINE.equals(map[y][x - i])) triggerExplosion(x - i, y, ship);
 		}
 		
 		return true;
@@ -300,25 +308,37 @@ public class Game {
 		if (shipDirection == 0) { // Top
 			for (int i = 0; i < targetShip.getShipType().getLength(); i++) {
 				if (targetX == shipX && targetY == (shipY + i)) {
-					targetShip.getHull()[i] = false; 
+					if (targetShip.isAlive() && targetShip.getHull()[i]) {
+						targetShip.getHull()[i] = false;
+						computeHit(ship, targetShip);
+					}
 				}
 			}
 		} else if (shipDirection == 1) { // Right
 			for (int i = 0; i < targetShip.getShipType().getLength(); i++) {
 				if (targetX == (shipX - i) && targetY == shipY) {
-					targetShip.getHull()[i] = false; 
+					if (targetShip.isAlive() && targetShip.getHull()[i]) {
+						targetShip.getHull()[i] = false;
+						computeHit(ship, targetShip);
+					}
 				}
 			}
 		} else if (shipDirection == 2) { // Bottom
 			for (int i = 0; i < targetShip.getShipType().getLength(); i++) {
 				if (targetX == shipX && targetY == (shipY - i)) {
-					targetShip.getHull()[i] = false; 
+					if (targetShip.isAlive() && targetShip.getHull()[i]) {
+						targetShip.getHull()[i] = false;
+						computeHit(ship, targetShip);
+					}
 				}
 			}
 		} else if (shipDirection == 3) { // Left
 			for (int i = 0; i < targetShip.getShipType().getLength(); i++) {
 				if (targetX == (shipX + i) && targetY == shipY) {
-					targetShip.getHull()[i] = false; 
+					if (targetShip.isAlive() && targetShip.getHull()[i]) {
+						targetShip.getHull()[i] = false;
+						computeHit(ship, targetShip);
+					}
 				}
 			}
 		}
@@ -344,22 +364,22 @@ public class Game {
 			if (y + i >= GRID_HEIGHT) return false;
 			if (!CHARACTER_EMPTY.equals(map[y + i][x]) && !CHARACTER_MINE.equals(map[y + i][x])) return false;
 			ship.getPos().setLocation(x, y + i - (ship.getShipType().getLength() - 1));
-			if (CHARACTER_MINE.equals(map[y + i][x])) triggerExplosion(x, y + i);
+			if (CHARACTER_MINE.equals(map[y + i][x])) triggerExplosion(x, y + i, ship);
 		} else if (direction == 1) { // Right
 			if (x - i < 0) return false;
 			if (!CHARACTER_EMPTY.equals(map[y][x - i]) && !CHARACTER_MINE.equals(map[y][x - i])) return false;
 			ship.getPos().setLocation(x - i + (ship.getShipType().getLength() - 1), y);
-			if (CHARACTER_MINE.equals(map[y][x - i])) triggerExplosion(x - i, y);
+			if (CHARACTER_MINE.equals(map[y][x - i])) triggerExplosion(x - i, y, ship);
 		} else if (direction == 2) { // Bottom
 			if (y - i < 0) return false;
 			if (!CHARACTER_EMPTY.equals(map[y - i][x]) && !CHARACTER_MINE.equals(map[y - i][x])) return false;
 			ship.getPos().setLocation(x, y - i + (ship.getShipType().getLength() - 1));
-			if (CHARACTER_MINE.equals(map[y - i][x])) triggerExplosion(x, y - i);
+			if (CHARACTER_MINE.equals(map[y - i][x])) triggerExplosion(x, y - i, ship);
 		} else if (direction == 3) { // Left
 			if (x + i >= GRID_WIDTH) return false;
 			if (!CHARACTER_EMPTY.equals(map[y][x + i]) && !CHARACTER_MINE.equals(map[y][x + i])) return false;
 			ship.getPos().setLocation(x + i - (ship.getShipType().getLength() - 1), y);
-			if (CHARACTER_MINE.equals(map[y][x + i])) triggerExplosion(x + i, y);
+			if (CHARACTER_MINE.equals(map[y][x + i])) triggerExplosion(x + i, y, ship);
 		}
 		
 		return true;
@@ -407,7 +427,7 @@ public class Game {
 		}
 		
 		for (Position pos : minesTriggered) {
-			triggerExplosion(pos.getX(), pos.getY());
+			triggerExplosion(pos.getX(), pos.getY(), ship);
 		}
 				
 		return true;
@@ -442,7 +462,7 @@ public class Game {
 		
 		if (CHARACTER_MINE.equals(cell)) {
 			
-			triggerExplosion(targetX, targetY);
+			triggerExplosion(targetX, targetY, ship);
 			
 		} else if (MapUtils.isNumeric(cell)) {
 			
@@ -473,56 +493,92 @@ public class Game {
 				for (int i = 0; i < targetShip.getShipType().getLength(); i++) {
 					if (ship.getShipType().equals(ShipType.CARRIER)) {
 						if (targetX == shipX && targetY == (shipY + i - 1) && i > 0) {
-							targetShip.getHull()[i - 1] = false; 
+							if (targetShip.isAlive() && targetShip.getHull()[i - 1]) {
+								targetShip.getHull()[i - 1] = false;
+								computeHit(ship, targetShip);
+							}
 						}
 						if (targetX == shipX && targetY == (shipY + i + 1) && i < targetShip.getShipType().getLength() - 1) {
-							targetShip.getHull()[i + 1] = false; 
+							if (targetShip.isAlive() && targetShip.getHull()[i + 1]) {
+								targetShip.getHull()[i + 1] = false;
+								computeHit(ship, targetShip);
+							}
 						}
 					}
 					if (targetX == shipX && targetY == (shipY + i)) {
-						targetShip.getHull()[i] = false; 
+						if (targetShip.isAlive() && targetShip.getHull()[i]) {
+							targetShip.getHull()[i] = false;
+							computeHit(ship, targetShip);
+						}
 					}
 				}
 			} else if (shipDirection == 1) { // Right
 				for (int i = 0; i < targetShip.getShipType().getLength(); i++) {
 					if (ship.getShipType().equals(ShipType.CARRIER)) {
 						if (targetX == (shipX - i - 1) && targetY == shipY && i > 0) {
-							targetShip.getHull()[i - 1] = false; 
+							if (targetShip.isAlive() && targetShip.getHull()[i - 1]) {
+								targetShip.getHull()[i - 1] = false;
+								computeHit(ship, targetShip);
+							}
 						}
 						if (targetX == (shipX - i + 1) && targetY == shipY && i < targetShip.getShipType().getLength() - 1) {
-							targetShip.getHull()[i + 1] = false; 
+							if (targetShip.isAlive() && targetShip.getHull()[i + 1]) {
+								targetShip.getHull()[i + 1] = false;
+								computeHit(ship, targetShip);
+							}
 						}
 					}
 					if (targetX == (shipX - i) && targetY == shipY) {
-						targetShip.getHull()[i] = false; 
+						if (targetShip.isAlive() && targetShip.getHull()[i]) {
+							targetShip.getHull()[i] = false;
+							computeHit(ship, targetShip);
+						}
 					}
 				}
 			} else if (shipDirection == 2) { // Bottom
 				for (int i = 0; i < targetShip.getShipType().getLength(); i++) {
 					if (ship.getShipType().equals(ShipType.CARRIER)) {
 						if (targetX == shipX && targetY == (shipY - i - 1) && i > 0) {
-							targetShip.getHull()[i - 1] = false; 
+							if (targetShip.isAlive() && targetShip.getHull()[i - 1]) {
+								targetShip.getHull()[i - 1] = false;
+								computeHit(ship, targetShip);
+							}
 						}
 						if (targetX == shipX && targetY == (shipY - i + 1) && i < targetShip.getShipType().getLength() - 1) {
-							targetShip.getHull()[i + 1] = false; 
+							if (targetShip.isAlive() && targetShip.getHull()[i + 1]) {
+								targetShip.getHull()[i + 1] = false;
+								computeHit(ship, targetShip);
+							}
 						}
 					}
 					if (targetX == shipX && targetY == (shipY - i)) {
-						targetShip.getHull()[i] = false; 
+						if (targetShip.isAlive() && targetShip.getHull()[i]) {
+							targetShip.getHull()[i] = false;
+							computeHit(ship, targetShip);
+						} 
 					}
 				}
 			} else if (shipDirection == 3) { // Left
 				for (int i = 0; i < targetShip.getShipType().getLength(); i++) {
 					if (ship.getShipType().equals(ShipType.CARRIER)) {
 						if (targetX == (shipX + i - 1) && targetY == shipY && i > 0) {
-							targetShip.getHull()[i - 1] = false; 
+							if (targetShip.isAlive() && targetShip.getHull()[i - 1]) {
+								targetShip.getHull()[i - 1] = false;
+								computeHit(ship, targetShip);
+							}
 						}
 						if (targetX == (shipX + i + 1) && targetY == shipY && i < targetShip.getShipType().getLength() - 1) {
-							targetShip.getHull()[i + 1] = false; 
+							if (targetShip.isAlive() && targetShip.getHull()[i + 1]) {
+								targetShip.getHull()[i + 1] = false;
+								computeHit(ship, targetShip);
+							}
 						}
 					}
 					if (targetX == (shipX + i) && targetY == shipY) {
-						targetShip.getHull()[i] = false; 
+						if (targetShip.isAlive() && targetShip.getHull()[i]) {
+							targetShip.getHull()[i] = false;
+							computeHit(ship, targetShip);
+						}
 					}
 				}
 			}
@@ -566,7 +622,17 @@ public class Game {
 		
 	}
 	
-	private void triggerExplosion(int x, int y) {
+	private void computeHit(Ship ship, Ship targetShip) {
+		
+		ship.setHits(ship.getHits() + 1);
+		targetShip.setDamage(targetShip.getDamage() + 1);
+		
+		if (!targetShip.isAlive()) {
+			ship.setSunken(ship.getSunken() + 1);
+		}
+	}
+	
+	private void triggerExplosion(int x, int y, Ship ship) {
 		
 		map[y][x] = CHARACTER_EMPTY;
 		
@@ -579,7 +645,7 @@ public class Game {
 				
 				// Chain explosions
 				if (CHARACTER_MINE.equals(cell)) {
-					triggerExplosion(x + k, y + j);
+					triggerExplosion(x + k, y + j, ship);
 				} else if (MapUtils.isNumeric(cell)) {
 					
 					Integer ownerID = Integer.parseInt(cell);
@@ -601,25 +667,37 @@ public class Game {
 					if (shipDirection == 0) { // Top
 						for (int i = 0; i < targetShip.getShipType().getLength(); i++) {
 							if ((x + k) == shipX && (y + j) == (shipY + i)) {
-								targetShip.getHull()[i] = false; 
+								if (targetShip.isAlive() && targetShip.getHull()[i]) {
+									targetShip.getHull()[i] = false;
+									computeHit(ship, targetShip);
+								} 
 							}
 						}
 					} else if (shipDirection == 1) { // Right
 						for (int i = 0; i < targetShip.getShipType().getLength(); i++) {
 							if ((x + k) == (shipX - i) && (y + j) == shipY) {
-								targetShip.getHull()[i] = false; 
+								if (targetShip.isAlive() && targetShip.getHull()[i]) {
+									targetShip.getHull()[i] = false;
+									computeHit(ship, targetShip);
+								}  
 							}
 						}
 					} else if (shipDirection == 2) { // Bottom
 						for (int i = 0; i < targetShip.getShipType().getLength(); i++) {
 							if ((x + k) == shipX && (y + j) == (shipY - i)) {
-								targetShip.getHull()[i] = false; 
+								if (targetShip.isAlive() && targetShip.getHull()[i]) {
+									targetShip.getHull()[i] = false;
+									computeHit(ship, targetShip);
+								}  
 							}
 						}
 					} else if (shipDirection == 3) { // Left
 						for (int i = 0; i < targetShip.getShipType().getLength(); i++) {
 							if ((x + k) == (shipX + i) && (y + j) == shipY) {
-								targetShip.getHull()[i] = false; 
+								if (targetShip.isAlive() && targetShip.getHull()[i]) {
+									targetShip.getHull()[i] = false;
+									computeHit(ship, targetShip);
+								} 
 							}
 						}
 					}
@@ -1288,13 +1366,21 @@ public class Game {
 		
 		for (Player player : players) {
 			
+			int hits = 0;
+			int sunken = 0;
+			int damage = 0;
+			int death = 0;
+			
 			for (Ship ship : ships) {
 				if (player.equals(ship.getOwner())) {
-					
+					hits += ship.getHits();
+					sunken += ship.getSunken();
+					damage += ship.getDamage();
+					death += (ship.isAlive() ? 0 : 1);
 				}
 			}
 			
-			scores.add(new Score(player));
+			scores.add(new Score(player, hits, sunken, damage, death));
 		}
 		
 		//sort descending

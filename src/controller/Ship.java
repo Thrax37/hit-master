@@ -26,6 +26,10 @@ public class Ship {
 	private Boolean shield = false;
 	private Boolean shooting = false;
 	
+	private Integer hits = 0;
+	private Integer sunken = 0;
+	private Integer damage = 0;
+	
 	public Ship(int id, Player owner, ShipType shipType, int x, int y, int direction) {
 		super();
 		this.id = id;
@@ -209,6 +213,30 @@ public class Ship {
 
 	public void setShooting(Boolean shooting) {
 		this.shooting = shooting;
+	}
+
+	public Integer getHits() {
+		return hits;
+	}
+
+	public void setHits(Integer hits) {
+		this.hits = hits;
+	}
+
+	public Integer getSunken() {
+		return sunken;
+	}
+
+	public void setSunken(Integer sunken) {
+		this.sunken = sunken;
+	}
+
+	public Integer getDamage() {
+		return damage;
+	}
+
+	public void setDamage(Integer damage) {
+		this.damage = damage;
 	}
 	
 	
