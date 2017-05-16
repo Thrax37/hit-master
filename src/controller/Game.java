@@ -35,7 +35,7 @@ public class Game {
 	
 	private static final int MAX_UNDERWATER = 5;
 	
-	private static final String CHARACTER_EMPTY = " ";
+	private static final String CHARACTER_EMPTY = ".";
 	private static final String CHARACTER_MINE = "M";
 	private static final String CHARACTER_WRECKAGE = "W";
 	private static final String CHARACTER_WALL = "X";
