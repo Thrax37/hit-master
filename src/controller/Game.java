@@ -971,8 +971,8 @@ public class Game {
 	}
 	
 	private void executeRam(Ship ship) {
-		if (ship.getActionsLeft() > 0) {
-			ship.setActionsLeft(ship.getActionsLeft() - 1);
+		if (ship.getMovesLeft() == ship.getShipType().getMoves()) {
+			ship.setMovesLeft(0);
 			
 			if (ramShip(ship)) {
 				updateMap();
