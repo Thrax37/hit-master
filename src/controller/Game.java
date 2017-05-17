@@ -9,12 +9,14 @@ import java.util.Map;
 import java.util.Random;
 
 import players.PassiveBot;
+import players.PeaceMaker;
 import players.RandomBot;
 
 public class Game {
 	private static Player[] players = {
 		new PassiveBot(),
-		new RandomBot()
+		new RandomBot(),
+		new PeaceMaker()
 	};
 	
 	// Game Parameters
@@ -142,6 +144,9 @@ public class Game {
 			if (!makeTurns()) break; //break if only no player left
 		}
 	
+		updateMap();
+		displayGrid();
+		
 		return printResults();
 	}
 	

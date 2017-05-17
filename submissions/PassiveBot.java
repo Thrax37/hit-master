@@ -1,4 +1,3 @@
-
 public class PassiveBot {
 
 	int round;

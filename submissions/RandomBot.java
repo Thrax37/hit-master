@@ -24,7 +24,7 @@ public class RandomBot {
 
 		String[] actions = { "M", "B", "C", "K", "F", "S", "N", "A" };
 		Random random = new Random();
-		int action = random.nextInt(12);
+		int action = random.nextInt(8);
 		
 		int rangeX = random.nextInt(5);
 		int rangeY = random.nextInt(5);
